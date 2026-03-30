@@ -1,0 +1,85 @@
+---
+import Container from "@components/container.astro";
+import Link from "@components/ui/link.astro";
+import Dropdown from "./dropdown.astro";
+import AuthButtons from "@components/AuthButtons.astro";
+import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
+
+const menuitems = [
+  {
+    title: "Projects",
+    path: "/projects",
+  },
+  {
+    title: "Marketplace",
+    path: "/marketplace",
+  },
+  {
+    title: "Blog",
+    path: "/blog",
+  },
+  {
+    title: "About",
+    path: "/about",
+  },
+  {
+    title: "Contact",
+    path: "/contact",
+  },
+];
+---
+
+<Container>
+  <header class="flex items-center justify-between my-5">
+    <Astronav>
+      <div class="flex w-full lg:w-auto items-center justify-between">
+        <a href="/" class="text-lg flex-shrink-0">
+          <span class="font-bold text-slate-800">Astro</span><span class="text-slate-500">ship</span>
+        </a>
+        <div class="block lg:hidden">
+          <MenuIcon class="w-4 h-4 text-gray-800" />
+        </div>
+      </div>
+
+      <!-- Desktop: centered nav links + auth -->
+      <div class="hidden lg:flex items-center w-full">
+        <nav class="flex-1 flex justify-center">
+          <ul class="flex items-center gap-3">
+            {
+              menuitems.map((item) => (
+                <li>
+                  <a
+                    href={item.path}
+                    class="px-3 py-2 text-gray-600 hover:text-gray-900 whitespace-nowrap">
+                    {item.title}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+        <div class="flex-shrink-0">
+          <AuthButtons />
+        </div>
+      </div>
+
+      <!-- Mobile: dropdown menu -->
+      <MenuItems class="hidden w-full mt-2 lg:hidden">
+        <ul class="flex flex-col">
+          {
+            menuitems.map((item) => (
+              <li>
+                <a
+                  href={item.path}
+                  class="flex px-3 py-2 items-center text-gray-600 hover:text-gray-900">
+                  <span>{item.title}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <AuthButtons />
+      </MenuItems>
+    </Astronav>
+  </header>
+</Container>

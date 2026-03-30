@@ -1,0 +1,292 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import Sectionhead from "@components/sectionhead.astro";
+import { supabase } from '@lib/supabase';
+import { getCart, getCartTotal } from '@lib/cart';
+
+// Check authentication (middleware ensures session exists for protected routes)
+const session = Astro.locals.session;
+
+if (!session) {
+  return Astro.redirect('/auth/login');
+}
+
+// Get cart data
+let cartItems = [];
+let cartTotal = 0;
+
+try {
+  cartItems = await getCart(session.user.id);
+  cartTotal = await getCartTotal(session.user.id);
+} catch (error) {
+  console.error('Error loading cart:', error);
+}
+---
+
+<Layout title="Mon Panier">
+  <Container>
+    <Sectionhead>
+      <Fragment slot="title">Mon Panier</Fragment>
+      <Fragment slot="desc">Gérez vos articles et finalisez votre commande</Fragment>
+    </Sectionhead>
+
+    <!-- Cart Summary -->
+    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-6 mb-8 text-white">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+          <h2 class="text-2xl font-bold mb-2">Résumé du panier</h2>
+          <p class="opacity-90">
+            <span id="total-items">{cartItems.reduce((sum, item) => sum + item.quantity, 0)}</span> article(s) • 
+            Total: <span id="total-price" class="text-xl font-bold">{cartTotal.toFixed(2)}€</span>
+          </p>
+        </div>
+        <div class="flex gap-3">
+          <button id="clear-cart" class="px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-all">
+            Vider le panier
+          </button>
+          <button id="checkout-btn" class="px-6 py-2 bg-white text-indigo-600 font-medium rounded-lg hover:bg-gray-100 transition-all">
+            Procéder au paiement
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty Cart -->
+    {cartItems.length === 0 && (
+      <div class="text-center py-16">
+        <div class="max-w-md mx-auto">
+          <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">Votre panier est vide</h3>
+          <p class="text-gray-600 mb-6">Découvrez nos avatars et services pour remplir votre panier !</p>
+          <div class="flex gap-3 justify-center">
+            <a href="/marketplace" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+              🛍️ Explorer le Marketplace
+            </a>
+            <a href="/settings/avatar" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+              🎭 Choisir un avatar
+            </a>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <!-- Cart Items -->
+    {cartItems.length > 0 && (
+      <div class="space-y-4" id="cart-items">
+        {cartItems.map(item => (
+          <div class="bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200" data-item-id={item.id} data-price={item.item_price}>
+            <div class="flex flex-col md:flex-row gap-4 items-center">
+              <!-- Item Image -->
+              <div class="flex-shrink-0">
+                {item.item_image ? (
+                  <img src={item.item_image} alt={item.item_name} class="w-20 h-20 rounded-xl object-cover border border-gray-100" />
+                ) : (
+                  <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-sm">
+                    <span class="text-white text-2xl font-bold">{item.item_name.charAt(0).toUpperCase()}</span>
+                  </div>
+                )}
+              </div>
+
+              <!-- Item Details -->
+              <div class="flex-grow w-full">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                  <div>
+                    <h3 class="text-lg font-bold text-gray-900">{item.item_name}</h3>
+                    <span class="inline-flex items-center gap-1 text-sm text-gray-400 mt-0.5">
+                      {item.item_type === 'avatar' ? '🎭 Avatar' : 
+                       item.item_type === 'service' ? '⚙️ Service' : '📦 Produit'}
+                    </span>
+                  </div>
+                  
+                  <div class="flex items-center gap-5">
+                    <div class="flex items-center gap-2">
+                      <label class="text-sm text-gray-500">Qté</label>
+                      <select class="quantity-select w-16 px-2 py-1.5 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:border-indigo-500 focus:outline-none" data-item-id={item.id}>
+                        {[1,2,3,4,5].map(qty => (
+                          <option value={qty} selected={qty === item.quantity}>{qty}</option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div class="text-right">
+                      <p class="text-lg font-bold text-gray-900">{(item.item_price * item.quantity).toFixed(2)}€</p>
+                      <p class="text-xs text-gray-400">{item.item_price.toFixed(2)}€ / unité</p>
+                    </div>
+
+                    <button class="remove-item-btn text-gray-300 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 transition-colors" data-item-id={item.id}>
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+
+    <!-- Order History -->
+    <div class="mt-12 bg-white rounded-lg border border-gray-200 p-6">
+      <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+        📦 Historique des commandes
+      </h2>
+      <div id="order-history" class="space-y-4">
+        <!-- Order history will be dynamically inserted here -->
+      </div>
+      
+      <!-- Empty History State -->
+      <div id="empty-history" class="text-center py-8">
+        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune commande passée</h3>
+        <p class="text-gray-600">Votre historique de commandes apparaîtra ici.</p>
+      </div>
+    </div>
+  </Container>
+</Layout>
+
+<script>
+  import { supabase } from '../lib/supabase';
+  import { removeFromCart, updateQuantity, clearCart } from '../lib/cart';
+  import { showToast } from '../utils/ui';
+
+  let currentUserId = '{session.user.id}';
+
+  // Update cart totals
+  function updateTotals() {
+    const items = document.querySelectorAll('#cart-items > div');
+    let totalItems = 0;
+    let totalPrice = 0;
+
+    items.forEach(item => {
+      const quantity = parseInt(item.querySelector('.quantity-select')?.value || '1');
+      const price = parseFloat(item.dataset.price || '0');
+      totalItems += quantity;
+      totalPrice += price * quantity;
+    });
+
+    document.getElementById('total-items').textContent = totalItems.toString();
+    document.getElementById('total-price').textContent = `${totalPrice.toFixed(2)}€`;
+  }
+
+  // Remove item
+  async function removeItem(itemId) {
+    try {
+      await removeFromCart(currentUserId, itemId);
+      
+      // Remove from DOM
+      const itemElement = document.querySelector(`[data-item-id="${itemId}"]`);
+      if (itemElement) {
+        itemElement.remove();
+        updateTotals();
+        
+        // Check if cart is empty
+        const remainingItems = document.querySelectorAll('#cart-items > div');
+        if (remainingItems.length === 0) {
+          location.reload(); // Reload to show empty state
+        }
+      }
+
+      // Update header cart badge
+      window.dispatchEvent(new CustomEvent('cart-updated'));
+      
+      showToast('Article supprimé du panier');
+    } catch (error) {
+      console.error('Error removing item:', error);
+      showToast('Erreur lors de la suppression', true);
+    }
+  }
+
+  // Update quantity
+  async function updateItemQuantity(itemId, newQuantity) {
+    try {
+      await updateQuantity(currentUserId, itemId, newQuantity);
+      
+      if (newQuantity === 0) {
+        await removeItem(itemId);
+      } else {
+        // Update the display
+        const itemElement = document.querySelector(`[data-item-id="${itemId}"]`);
+        if (itemElement) {
+          const price = parseFloat(itemElement.dataset.price || '0');
+          const subtotalElement = itemElement.querySelector('.text-lg.font-semibold');
+          if (subtotalElement) {
+            subtotalElement.textContent = `${(price * newQuantity).toFixed(2)}€`;
+          }
+          updateTotals();
+        }
+      }
+
+      // Update header cart badge
+      window.dispatchEvent(new CustomEvent('cart-updated'));
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+      showToast('Erreur lors de la mise à jour', true);
+    }
+  }
+
+  // Clear cart
+  async function clearCartItems() {
+    if (!confirm('Êtes-vous sûr de vouloir vider votre panier ?')) {
+      return;
+    }
+
+    try {
+      await clearCart(currentUserId);
+      location.reload(); // Reload to show empty state
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+      showToast('Erreur lors du vidage du panier', true);
+    }
+  }
+
+
+  // Event listeners
+  document.addEventListener('DOMContentLoaded', () => {
+    // Quantity change handlers
+    document.querySelectorAll('.quantity-select').forEach(select => {
+      select.addEventListener('change', (e) => {
+        const itemId = e.target.dataset.itemId;
+        const newQuantity = parseInt(e.target.value);
+        updateItemQuantity(itemId, newQuantity);
+      });
+    });
+
+    // Remove item handlers
+    document.querySelectorAll('.remove-item-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const itemId = e.target.closest('[data-item-id]').dataset.itemId;
+        removeItem(itemId);
+      });
+    });
+
+    // Clear cart handler
+    document.getElementById('clear-cart')?.addEventListener('click', clearCartItems);
+
+    // Checkout handler
+    document.getElementById('checkout-btn')?.addEventListener('click', () => {
+      showToast('Redirection vers le paiement...');
+      setTimeout(() => {
+        alert('Fonctionnalité de paiement bientôt disponible !');
+      }, 1500);
+    });
+  });
+</script>
+
+<style>
+  .quantity-select:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+</style>

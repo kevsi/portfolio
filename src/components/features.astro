@@ -1,0 +1,68 @@
+---
+// @ts-ignore
+import { Icon } from "astro-icon/components";
+
+const features = [
+  {
+    title: "Web Design",
+    description:
+      "Création de designs modernes et responsive qui captivent vos visiteurs et reflètent votre identité de marque.",
+    icon: "bx:bxs-palette",
+  },
+  {
+    title: "Développement Web",
+    description:
+      "Développement de sites web et applications performantes avec les dernières technologies (React, Astro, Node.js).",
+    icon: "bx:bx-code",
+  },
+  {
+    title: "UI/UX Design",
+    description:
+      "Conception d'interfaces utilisateur intuitives et expériences utilisateur optimisées pour maximiser l'engagement.",
+    icon: "bx:bxs-devices",
+  },
+  {
+    title: "Responsive Design",
+    description:
+      "Sites parfaitement adaptés à tous les écrans : mobile, tablette et desktop pour une expérience fluide partout.",
+    icon: "bx:bxs-mobile",
+  },
+  {
+    title: "SEO Optimisation",
+    description:
+      "Optimisation pour les moteurs de recherche pour améliorer votre visibilité en ligne et attirer plus de clients.",
+    icon: "bx:bxs-search",
+  },
+  {
+    title: "Support & Maintenance",
+    description:
+      "Accompagnement continu et maintenance de votre site pour garantir sa performance et sa sécurité.",
+    icon: "bx:bxs-phone-call",
+  },
+];
+---
+
+<div class="mt-16 md:mt-0">
+  <h2 class="text-4xl lg:text-5xl font-bold lg:tracking-tight">
+    Mes Services
+  </h2>
+  <p class="text-lg mt-4 text-slate-600">
+    Des solutions web complètes et sur mesure pour faire briller votre présence en ligne
+  </p>
+</div>
+
+<div class="grid sm:grid-cols-2 md:grid-cols-3 mt-16 gap-16">
+  {
+    features.map((item) => (
+      <div class="flex gap-4 items-start">
+        <div class="mt-1 bg-black rounded-full  p-2 w-8 h-8 shrink-0">
+          <Icon class="text-white" name={item.icon} />
+        </div>
+        <div>
+          <h3 class="font-semibold text-lg">{item.title}</h3>{" "}
+          <p class="text-slate-500 mt-2 leading-relaxed">{item.description}</p>
+        </div>
+      </div>
+    ))
+  }
+</div>

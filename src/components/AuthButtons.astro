@@ -1,0 +1,448 @@
+---
+---
+
+<!-- Pre-paint inline script to prevent flash -->
+<script is:inline>
+  (function () {
+    try {
+      const raw = localStorage.getItem('auth_user');
+      if (raw) {
+        const user = JSON.parse(raw);
+
+        document.documentElement.setAttribute('data-auth', 'true');
+
+        const name = user.full_name || user.username || (user.email ? user.email.split('@')[0] : '');
+        const initials = name.split(' ').map(function(w) { return w[0]; }).join('').slice(0, 2).toUpperCase();
+        const previewUrl = user.avatar_url || user.avatar_lottie_url;
+
+        // Desktop avatar
+        var desktopAvatar = document.getElementById('user-avatar-desktop');
+        var desktopImg = document.getElementById('user-avatar-img-desktop');
+        if (desktopAvatar && desktopImg) {
+          if (previewUrl) {
+            desktopAvatar.setAttribute('data-initials', '');
+            desktopImg.src = previewUrl;
+            desktopImg.style.display = 'block';
+          } else {
+            desktopAvatar.setAttribute('data-initials', initials);
+            desktopImg.style.display = 'none';
+          }
+        }
+
+        // Mobile avatar + name
+        var mobileAvatar = document.getElementById('user-avatar-mobile');
+        var mobileImg = document.getElementById('user-avatar-img-mobile');
+        var mobileName = document.getElementById('user-name-mobile');
+        if (mobileAvatar && mobileImg) {
+          if (previewUrl) {
+            mobileAvatar.setAttribute('data-initials', '');
+            mobileImg.src = previewUrl;
+            mobileImg.style.display = 'block';
+          } else {
+            mobileAvatar.setAttribute('data-initials', initials);
+            mobileImg.style.display = 'none';
+          }
+        }
+        if (mobileName) mobileName.textContent = name;
+      } else {
+        document.documentElement.setAttribute('data-auth', 'false');
+      }
+    } catch (_) {
+      document.documentElement.setAttribute('data-auth', 'false');
+    }
+  })();
+</script>
+
+<style is:global>
+  /* ── Auth visibility ────────────────────────────────────────────────── */
+
+  /* Hide everything until auth state is known */
+  .auth-section {
+    visibility: hidden;
+    opacity: 0;
+  }
+  html[data-auth] .auth-section {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.15s ease-out;
+  }
+
+  /* Logged-out state */
+  .auth-logged-out  { display: none !important; }
+  .auth-logged-in   { display: none !important; }
+
+  html[data-auth="false"] .auth-logged-out { display: flex !important; }
+  html[data-auth="false"] .auth-logged-in  { display: none !important; }
+
+  html[data-auth="true"] .auth-logged-out  { display: none !important; }
+  html[data-auth="true"] .auth-logged-in   { display: flex !important; }
+
+  /* Mobile auth classes — only below lg breakpoint */
+  #auth-container-mobile  { display: none; }
+  #user-menu-mobile       { display: none; }
+
+  @media (max-width: 1023px) {
+    html[data-auth="false"] #auth-container-mobile { display: flex !important; }
+    html[data-auth="false"] #user-menu-mobile      { display: none !important; }
+
+    html[data-auth="true"]  #auth-container-mobile { display: none !important; }
+    html[data-auth="true"]  #user-menu-mobile      { display: block !important; }
+  }
+
+  /* ── Avatar ─────────────────────────────────────────────────────────── */
+  .avatar-wrapper,
+  #user-avatar-desktop {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #534AB7;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .avatar-wrapper img,
+  #user-avatar-desktop img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+  }
+
+  #user-avatar-desktop::after,
+  .avatar-wrapper::after {
+    content: attr(data-initials);
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  #user-avatar-desktop[data-initials=""]::after,
+  .avatar-wrapper[data-initials=""]::after {
+    display: none;
+  }
+</style>
+
+<!-- Desktop -->
+<div class="hidden lg:flex items-center gap-4 auth-section" id="auth-container-desktop">
+
+  <!-- Logged out -->
+  <a href="/auth/login"    class="auth-logged-out text-gray-600 hover:text-gray-900">Log in</a>
+  <a href="/auth/register" class="auth-logged-out ml-4 text-gray-600 hover:text-gray-900">Sign up</a>
+
+  <!-- Logged in -->
+  <div class="auth-logged-in items-center gap-3">
+
+    <!-- Cart -->
+    <button id="cart-btn" onclick="window.location.href='/cart'"
+            class="relative p-2 text-gray-600 hover:text-gray-900 transition-colors">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+      </svg>
+      <span id="cart-badge"
+            class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs
+                   rounded-full flex items-center justify-center hidden">0</span>
+    </button>
+
+    <!-- Notifications -->
+    <div class="relative">
+      <button id="notifications-btn"
+              class="relative p-2 text-gray-600 hover:text-gray-900 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002
+                   0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159
+                   c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+        </svg>
+        <span id="notification-badge"
+              class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs
+                     rounded-full flex items-center justify-center hidden">0</span>
+      </button>
+
+      <!-- Notifications dropdown -->
+      <div id="notifications-dropdown"
+           class="hidden absolute right-0 top-full mt-2 w-96 bg-white rounded-lg
+                  shadow-lg border border-gray-200 z-50 max-h-96 overflow-hidden">
+        <div class="p-3 border-b border-gray-200 flex items-center justify-between">
+          <h3 class="font-semibold text-gray-900 text-sm">Notifications</h3>
+          <button id="mark-all-read-btn"
+                  class="text-xs text-indigo-600 hover:text-indigo-700">
+            Tout marquer comme lu
+          </button>
+        </div>
+        <div id="notifications-list" class="max-h-64 overflow-y-auto"></div>
+        <div class="p-2 border-t border-gray-200">
+          <a href="/notifications"
+             class="block text-center text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+            Voir toutes les notifications
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Avatar + dropdown -->
+    <div class="relative inline-block">
+      <button id="user-menu-btn" class="flex items-center focus:outline-none">
+        <div id="user-avatar-desktop" data-initials="?">
+          <img id="user-avatar-img-desktop" src="" alt="Avatar" />
+        </div>
+      </button>
+      <div id="user-dropdown-desktop"
+           class="hidden absolute right-0 top-full mt-2 w-48 bg-white rounded-md
+                  shadow-lg border border-gray-200 py-1 z-50">
+        <a href="/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+        <div class="border-t border-gray-200 my-1"></div>
+        <button id="logout-btn-desktop"
+                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+          Sign out
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile: logged out -->
+<div class="lg:hidden items-center mt-3 gap-4" id="auth-container-mobile">
+  <a href="/auth/login"    class="text-gray-600 hover:text-gray-900">Log in</a>
+  <a href="/auth/register" class="text-gray-600 hover:text-gray-900">Sign up</a>
+</div>
+
+<!-- Mobile: logged in -->
+<div class="hidden lg:hidden mt-3 space-y-2" id="user-menu-mobile">
+  <div class="flex items-center gap-2 px-3 py-2">
+    <div id="user-avatar-mobile" class="avatar-wrapper" data-initials="?">
+      <img id="user-avatar-img-mobile" src="" alt="Avatar" />
+    </div>
+    <span id="user-name-mobile" class="text-sm font-medium text-gray-700"></span>
+  </div>
+  <div class="flex items-center gap-2 px-3">
+    <button id="cart-btn-mobile" onclick="window.location.href='/cart'"
+            class="relative p-2 text-gray-600 hover:text-gray-900">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+      </svg>
+      <span id="cart-badge-mobile"
+            class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs
+                   rounded-full flex items-center justify-center hidden">0</span>
+    </button>
+    <button id="notifications-btn-mobile"
+            onclick="window.location.href='/notifications'"
+            class="relative p-2 text-gray-600 hover:text-gray-900">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002
+                 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159
+                 c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+      </svg>
+      <span id="notification-badge-mobile"
+            class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs
+                   rounded-full flex items-center justify-center hidden">0</span>
+    </button>
+  </div>
+  <a href="/settings" class="block px-3 py-2 text-gray-600 hover:text-gray-900">Settings</a>
+  <button id="logout-btn-mobile"
+          class="block w-full text-left px-3 py-2 text-red-600 hover:text-red-700">
+    Sign out
+  </button>
+</div>
+
+<script>
+  import { supabase } from '../lib/supabase';
+
+  // expose for settings.astro legacy code
+  (window as any).supabase = supabase;
+
+  let currentUserId: string | null = null;
+
+  function setAuthState(isLoggedIn: boolean) {
+    document.documentElement.setAttribute('data-auth', isLoggedIn ? 'true' : 'false');
+  }
+
+  function getAuthUser(): any {
+    try { return JSON.parse(localStorage.getItem('auth_user') || 'null'); } catch { return null; }
+  }
+
+  function clearAuthUser() {
+    localStorage.removeItem('auth_user');
+  }
+
+  async function initAuth() {
+    const stored = getAuthUser();
+
+    if (stored?.id) {
+      setAuthState(true);
+      currentUserId = stored.id;
+      applyUserData(stored);
+      loadCounts(stored.id);
+    } else {
+      setAuthState(false);
+    }
+
+    // Verify with server in background (cookie-based)
+    try {
+      const res = await fetch('/api/auth/session');
+      const data = await res.json();
+
+      if (data.user?.id) {
+        setAuthState(true);
+        currentUserId = data.user.id;
+        const authState = {
+          id: data.user.id,
+          email: data.user.email,
+          full_name: data.user.full_name || '',
+          username: data.user.username || '',
+          avatar_url: data.user.avatar_url || '',
+          avatar_lottie_url: data.user.avatar_lottie_url || '',
+        };
+        localStorage.setItem('auth_user', JSON.stringify(authState));
+        applyUserData(authState);
+        loadCounts(data.user.id);
+      } else {
+        // Session expired or invalid
+        setAuthState(false);
+        clearAuthUser();
+        currentUserId = null;
+      }
+    } catch {
+      // Network error — keep whatever pre-paint showed
+    }
+  }
+
+  function applyUserData(user: any) {
+    const name = user.full_name || user.username || (user.email ? user.email.split('@')[0] : '');
+    const initials = name.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase();
+    const previewUrl = user.avatar_url || user.avatar_lottie_url;
+
+    function fillAvatar(avatarEl: HTMLElement | null, imgEl: HTMLImageElement | null, nameEl: HTMLElement | null) {
+      if (!avatarEl) return;
+      if (previewUrl && imgEl) {
+        avatarEl.setAttribute('data-initials', '');
+        imgEl.src = previewUrl;
+        imgEl.style.display = 'block';
+      } else {
+        avatarEl.setAttribute('data-initials', initials);
+        if (imgEl) imgEl.style.display = 'none';
+      }
+      if (nameEl) nameEl.textContent = name;
+    }
+
+    fillAvatar(
+      document.getElementById('user-avatar-desktop'),
+      document.getElementById('user-avatar-img-desktop') as HTMLImageElement,
+      null
+    );
+    fillAvatar(
+      document.getElementById('user-avatar-mobile'),
+      document.getElementById('user-avatar-img-mobile') as HTMLImageElement,
+      document.getElementById('user-name-mobile')
+    );
+  }
+
+  // ── Dropdown ──────────────────────────────────────────────────────────
+  const menuBtn  = document.getElementById('user-menu-btn');
+  const dropdown = document.getElementById('user-dropdown-desktop');
+  const notiBtn  = document.getElementById('notifications-btn');
+  const notiDrop = document.getElementById('notifications-dropdown');
+
+  menuBtn?.addEventListener('click', e => {
+    e.stopPropagation();
+    dropdown?.classList.toggle('hidden');
+    notiDrop?.classList.add('hidden');
+  });
+
+  notiBtn?.addEventListener('click', e => {
+    e.stopPropagation();
+    notiDrop?.classList.toggle('hidden');
+    dropdown?.classList.add('hidden');
+  });
+
+  document.addEventListener('click', () => {
+    dropdown?.classList.add('hidden');
+    notiDrop?.classList.add('hidden');
+  });
+
+  // ── Logout ────────────────────────────────────────────────────────────
+  async function logout() {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch {}
+    clearAuthUser();
+    currentUserId = null;
+    window.location.href = '/';
+  }
+
+  document.getElementById('logout-btn-desktop')?.addEventListener('click', logout);
+  document.getElementById('logout-btn-mobile')?.addEventListener('click', logout);
+
+  // ── Mark all notifications read ───────────────────────────────────────
+  document.getElementById('mark-all-read-btn')?.addEventListener('click', async () => {
+    if (!currentUserId) return;
+    await supabase
+      .from('notifications')
+      .update({ is_read: true })
+      .eq('user_id', currentUserId);
+    document.getElementById('notification-badge')?.classList.add('hidden');
+    document.getElementById('notification-badge-mobile')?.classList.add('hidden');
+  });
+
+  // ── Badge counts ──────────────────────────────────────────────────────
+  async function loadCounts(userId: string) {
+    const { data: cartItems } = await supabase
+      .from('cart')
+      .select('quantity')
+      .eq('user_id', userId);
+
+    const cartCount = cartItems?.reduce((sum, i) => sum + (i.quantity || 1), 0) || 0;
+    updateBadge('cart-badge', cartCount);
+    updateBadge('cart-badge-mobile', cartCount);
+
+    const { count } = await supabase
+      .from('notifications')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('is_read', false);
+
+    updateBadge('notification-badge', count || 0);
+    updateBadge('notification-badge-mobile', count || 0);
+
+    supabase
+      .channel(`header-${userId}`)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'notifications',
+        filter: `user_id=eq.${userId}`,
+      }, () => {
+        const badge = document.getElementById('notification-badge');
+        const badgeMobile = document.getElementById('notification-badge-mobile');
+        for (const b of [badge, badgeMobile]) {
+          if (!b) continue;
+          const current = parseInt(b.textContent || '0', 10);
+          b.textContent = String(current + 1);
+          b.classList.remove('hidden');
+        }
+      })
+      .subscribe();
+  }
+
+  function updateBadge(id: string, count: number) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (count > 0) {
+      el.textContent = count > 99 ? '99+' : String(count);
+      el.classList.remove('hidden');
+    } else {
+      el.classList.add('hidden');
+    }
+  }
+
+  // ── Init ──────────────────────────────────────────────────────────────
+  initAuth();
+</script>
