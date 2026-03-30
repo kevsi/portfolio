@@ -1,166 +1,153 @@
-# Astroship - Astro SAAS Starter Website Template
+# Astroship — Plateforme d'Avatars Numériques
 
-Astroship is a free starter astro website template for saas, startups, marketing websites, landing pages & blogs. Built with Astro & TailwindCSS.
+Une marketplace moderne d'avatars animés et d'assets digitaux, construite avec **Astro**, **TailwindCSS** et **Supabase**.
 
-This Free Template is sponsored by [Web3Templates](https://web3templates.com)
+## Le projet
 
-## Live Demo
+Astroship est une plateforme permettant aux utilisateurs de :
 
-**[https://astroship.web3templates.com/](https://astroship.web3templates.com/)**
+- **Choisir un avatar animé** (Lottie) gratuit ou premium pour leur profil
+- **Explorer une marketplace** d'assets digitaux (templates, icônes, illustrations)
+- **Gérer leurs projets** avec une vitrine publique et des liens de démo
+- **Suivre leurs activités** via un système de notifications
+- **Lire un blog** avec des articles sur l'identité numérique et les avatars
 
-**[Download Astroship Template](https://web3templates.com/templates/astroship-starter-website-template-for-astro)**
+## Fonctionnalités
 
-## Upgrade to Astroship Pro Version
+### Authentification
+- Inscription avec sélection d'avatar animé à l'étape de création
+- Connexion / déconnexion par cookies sécurisés (httpOnly)
+- Réinitialisation de mot de passe
+- Middleware de protection des routes
 
-**[https://astroship-pro.web3templates.com/](https://astroship-pro.web3templates.com/)**
+### Marketplace
+- Catalogue d'assets avec filtres par catégorie, prix et tri
+- Recherche en temps réel
+- Fiche produit avec auteur, notes, téléchargements et démo
 
-**[Purchase Astroship Pro — $49](https://web3templates.com/templates/astroship-pro-astro-saas-website-template)**
+### Avatars
+- Catalogue d'avatars animés (Lottie) gratuits et premium
+- Aperçu animé au survol
+- Sélection d'avatar à l'inscription et depuis les paramètres
 
+### Projets
+- Vitrine de projets avec image, description et lien de démo
+- Chargement depuis Supabase
 
-<!-- prettier-ignore -->
-| Feature | Free Version | Pro Version |
-| --- | ------ | --- |
-| Astro v3 | ✅  | ✅ |
-| Content Collections | ✅  | ✅ |
-| Tailwind CSS   | ✅  | ✅ |
-| Mobile Responsive | ✅  | ✅ |
-| Working Contact Page | ✅  | ✅ |
-| Pro Layouts & Features | ❌  | ✅ |
-| Blog with Pagination | ❌ | ✅ |
-| View Transitions | ❌ | ✅ |
-| Advanced Homepage Design | ❌  | ✅ |
-| Features Page | ❌  | ✅ |
-| Integrations Page | ❌  | ✅ |
-| Elegant 404 Page | ❌  | ✅ |
-| 6 Months Support| ❌  | ✅  |
-| Free Updates    | ✅  | ✅  |
-| License         | GPL-2.0 | Commercial |
-| &nbsp; | &nbsp;| &nbsp;|
-| Pricing| Free|**$49**|
-| &nbsp; | [Deploy for free](https://vercel.com/new/surjithctly/clone?demo-description=Starter%20template%20for%20startups%2C%20marketing%20websites%20%26%20blogs%20built%20with%20Astro%20and%20TailwindCSS.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F5dB0dDqBr1BfvIoNOmffVB%2F784984a8d3fe5e3db123e7c655166046%2Fastroship_-_Tony_Sullivan.jpg&demo-title=Astroship&demo-url=https%3A%2F%2Fastroship.web3templates.com%2F&from=templates&project-name=Astroship&repository-name=astroship&repository-url=https%3A%2F%2Fgithub.com%2Fsurjithctly%2Fastroship&skippable-integrations=1) | [Purchase Pro](https://web3templates.com/templates/astroship-pro-astro-saas-website-template) |
+### Blog
+- Articles en français stockés dans Supabase
+- Page d'accueil avec article featured + grille
+- Lecture d'article avec rendu Markdown
 
-<a href="https://web3templates.com/templates/astroship-pro-astro-saas-website-template">
-<img width="160" alt="Upgrade to Pro" src="https://user-images.githubusercontent.com/1884712/199181300-37c2128e-d033-4145-a906-16fa5263a53b.png">
-</a>
+### Notifications
+- Système de notifications multi-types (commande, système, avatar, promotion, social)
+- Marquer comme lu / marquer tout comme lu
+- Temps relatif en français
 
-## Deploy this template
+### Panier
+- Ajout / suppression / modification de quantité
+- Calcul du total en temps réel
 
-You can instantly clone this to your GitHub and deploy the site by clicking the below buttons to deploy to your chosen providers!
+### Profil
+- Édition nom, prénom, username, bio
+- Upload de photo de couverture
+- Sélection d'avatar avec preview Lottie
 
-Click here to deploy on Vercel:
+## Stack technique
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsurjithctly%2Fastroship&project-name=astroship&repository-name=astroship&demo-title=Astroship%20-%20Astro%20Starter%20Template&demo-description=Astroship%20is%20a%20starter%20template%20for%20startups%2C%20marketing%20websites%20%26%20landing%20pages.%20Built%20with%20Astro%2C%20TailwindCSS&demo-url=https%3A%2F%2Fastroship.web3templates.com%2F&demo-image=https%3A%2F%2Fuser-images.githubusercontent.com%2F1884712%2F200831799-10ef2456-a02e-4068-b580-4b5326f0b33b.png)
+| Couche | Technologie |
+|--------|-------------|
+| Framework | Astro v6 (SSR) |
+| CSS | TailwindCSS 3.4 |
+| Backend | Supabase (Auth, Database, Storage) |
+| Auth | Cookies httpOnly + JWT |
+| Animations | Lottie (bodymovin) |
+| Langage | TypeScript |
 
-Click here to deploy on Netlify:
+## Base de données (Supabase)
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/surjithctly/astroship)
-
-## Preview
-
-![image](https://user-images.githubusercontent.com/1884712/200831799-10ef2456-a02e-4068-b580-4b5326f0b33b.png)
-
-
-## Pro Version Preview
-
-![preview](https://github.com/surjithctly/astroship/assets/1884712/25665c02-d2a7-43dc-89b2-34a8ae37ade9)
-
-
-### Pagespeed Score
-
-[![pagespeed](https://user-images.githubusercontent.com/1884712/210250214-7aa98167-7993-4b90-8138-326b8fa0c223.png)](https://pagespeed.web.dev/report?url=https%3A%2F%2Fastroship.web3templates.com%2F)
-
+| Table | Rôle |
+|-------|------|
+| `profiles` | Profils utilisateurs |
+| `avatars` | Avatars animés (Lottie) |
+| `assets` | Produits marketplace |
+| `projects` | Projets utilisateurs |
+| `blog_posts` | Articles du blog |
+| `cart` | Panier |
+| `orders` | Commandes |
+| `notifications` | Notifications |
+| `comments` | Commentaires |
+| `likes` | Likes |
 
 ## Installation
 
-If you are reading this on github, you can click on the "Use this template" button above to create a new repository from astroship to your account. Then you can do a `git clone` to clone it to your local system.
-
-Alternatively, you can clone the project directly from this repo to your local system.
-
-### 1. Clone the repo
+### 1. Cloner le projet
 
 ```bash
-git clone https://github.com/surjithctly/astroship.git myProjectName
-# or
-git clone https://github.com/surjithctly/astroship.git .
+git clone <url-du-repo> mon-projet
+cd mon-projet
 ```
 
-The `.` will clone it to the current directory so make sure you are inside your project folder first.
-
-### 2. Install Dependencies
+### 2. Installer les dépendances
 
 ```bash
-npm install
-# or
-yarn install
-# or (recommended)
 pnpm install
 ```
 
-### 3. Start development Server
+### 3. Configurer les variables d'environnement
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or (recommended)
+cp .env.example .env
+```
+
+Remplir les valeurs dans `.env` (voir `.env.example`).
+
+### 4. Configurer Supabase
+
+1. Créer un projet sur [supabase.com](https://supabase.com)
+2. Exécuter le SQL dans `tables.sql` pour créer les tables
+3. Exécuter les policies RLS (voir section ci-dessous)
+4. Copier l'URL et la clé publishable dans `.env`
+
+### 5. Lancer en développement
+
+```bash
 pnpm dev
 ```
 
-### Preview & Build
+### 6. Build pour la production
 
 ```bash
-npm run preview
-npm run build
-# or
-yarn preview
-yarn build
-# or (recommended)
-pnpm preview
 pnpm build
 ```
 
-We recommend using [pnpm](https://pnpm.io/) to save disk space on your computer.
-
-### Other Commands
-
-```bash
-pnpm astro ...
-pnpm astro add
-pnpm astro --help
-```
-
-## Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+## Structure du projet
 
 ```
-/
-├── public/
-│   └── ...
-├── src/
-│   ├── components/
-│   │   └── ...
-│   ├── layouts/
-│   │   └── ...
-│   └── pages/
-│       └── ...
-└── package.json
+src/
+├── components/       # Composants Astro (navbar, footer, cartes, etc.)
+├── layouts/          # Layouts (Layout.astro, BlogLayout.astro)
+├── lib/              # Logique métier (supabase, cart, notifications, cookies)
+├── pages/            # Pages et routes API
+│   ├── api/auth/     # Endpoints login, register, logout, session
+│   ├── auth/         # Pages login, register, forgot/reset password
+│   ├── blog/         # Index blog + articles
+│   ├── marketplace/  # Catalogue + fiche produit
+│   ├── settings/     # Paramètres + sélection avatar
+│   └── ...           # Projects, cart, notifications, etc.
+├── types/            # Types TypeScript (User, Asset, Project, Comment)
+├── utils/            # Utilitaires (ui, lottie)
+└── content/          # Collections de contenu (team)
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Sécurité
 
-Any static assets, like images, can be placed in the `public/` directory.
+- Cookies `httpOnly` + `secure` (HTTPS en production)
+- Cookies `sameSite: lax` pour CSRF
+- Routes API pour l'authentification (pas de secrets côté client)
+- Row Level Security (RLS) sur toutes les tables Supabase
+- Pas de données sensibles dans le code source
 
-## TailwindCSS
+## Licence
 
-TailwindCSS is already configured in this repo, so you can start using it without any installation.
-
-## Credits
-
-[Hero Illustration](https://www.figma.com/community/file/1108400791662599811) by [Streamline](https://www.streamlinehq.com/)
-
-## 👀 Want to learn more?
-
-Feel free to check out [Astro Docs](https://docs.astro.build) or jump into our [Discord Chat](https://web3templates.com/discord).
-
-[![Built with Astro](https://astro.badg.es/v1/built-with-astro.svg)](https://astro.build)
+Basé sur [Astroship](https://github.com/surjithctly/astroship) — GPL-2.0
