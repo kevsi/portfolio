@@ -1,0 +1,258 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+
+const categories = [
+  { name: 'All', icon: '✦' },
+  { name: 'Web App', icon: '◈' },
+  { name: 'Mobile', icon: '◇' },
+  { name: 'Dashboard', icon: '◆' },
+  { name: 'AI/ML', icon: '◎' },
+  { name: 'E-commerce', icon: '▣' },
+  { name: 'Tool', icon: '⬡' },
+];
+---
+
+<Layout title="Projets">
+  <div class="min-h-screen bg-gray-50/50">
+    <!-- Hero Section -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600">
+      <div class="absolute inset-0 opacity-[0.08]">
+        <svg width="100%" height="100%"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)"/></svg>
+      </div>
+      <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+      <div class="absolute bottom-0 left-0 w-72 h-72 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+
+      <div class="relative max-w-7xl mx-auto px-6 py-16 lg:py-20">
+        <div class="text-center">
+          <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/15 backdrop-blur-sm text-white/90 text-sm font-medium rounded-full mb-6 border border-white/10">
+            <span class="w-2 h-2 bg-emerald-300 rounded-full animate-pulse"></span>
+            Projets
+          </span>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight mb-4">
+            Nos<br/>
+            <span class="bg-gradient-to-r from-emerald-200 to-cyan-200 bg-clip-text text-transparent">réalisations</span>
+          </h1>
+          <p class="text-lg text-white/70 max-w-2xl mx-auto mb-8">
+            Chaque projet est le fruit d'une expertise technique et d'une vision innovante. Découvrez nos créations.
+          </p>
+
+          <!-- Search Bar Hero -->
+          <div class="max-w-2xl mx-auto">
+            <div class="relative group">
+              <div class="absolute -inset-0.5 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-300"></div>
+              <div class="relative flex items-center bg-white rounded-2xl shadow-2xl shadow-black/10">
+                <svg class="absolute left-5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input
+                  type="text"
+                  id="search-input"
+                  placeholder="Rechercher un projet..."
+                  class="w-full py-4 pl-14 pr-4 text-gray-900 placeholder-gray-400 bg-transparent rounded-2xl focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <Container>
+      <div id="loading" class="text-center py-20">
+        <div class="inline-block w-10 h-10 border-3 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
+        <p class="mt-4 text-gray-500">Chargement des projets...</p>
+      </div>
+
+      <!-- Content -->
+      <div id="content" class="hidden">
+        <!-- Stats -->
+        <div class="grid grid-cols-3 gap-4 -mt-8 mb-10 relative z-10">
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center hover:shadow-md transition-shadow">
+            <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            </div>
+            <div id="stat-total" class="text-2xl font-bold text-gray-900">-</div>
+            <div class="text-sm text-gray-500 mt-0.5">Projets</div>
+          </div>
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center hover:shadow-md transition-shadow">
+            <div class="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </div>
+            <div id="stat-creators" class="text-2xl font-bold text-gray-900">-</div>
+            <div class="text-sm text-gray-500 mt-0.5">Créateurs</div>
+          </div>
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center hover:shadow-md transition-shadow">
+            <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div id="stat-progress" class="text-2xl font-bold text-gray-900">-</div>
+            <div class="text-sm text-gray-500 mt-0.5">Récents</div>
+          </div>
+        </div>
+
+        <!-- Count -->
+        <div class="flex items-center justify-between mb-6">
+          <p class="text-sm text-gray-500"><span id="project-count" class="font-semibold text-gray-900">0</span> résultats</p>
+        </div>
+
+        <!-- Projects Grid -->
+        <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 pb-20"></div>
+
+        <!-- No Results -->
+        <div id="no-results" class="hidden text-center py-20">
+          <div class="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-1">Aucun projet trouvé</h3>
+          <p class="text-gray-500">Essayez de modifier votre recherche.</p>
+        </div>
+      </div>
+    </Container>
+  </div>
+</Layout>
+
+<script>
+  import { supabase } from '../lib/supabase';
+
+  let allProjects = [];
+  let searchQuery = '';
+
+  const loadingEl = document.getElementById('loading');
+  const contentEl = document.getElementById('content');
+  const searchInput = document.getElementById('search-input');
+  const projectsGrid = document.getElementById('projects-grid');
+  const projectCount = document.getElementById('project-count');
+  const noResults = document.getElementById('no-results');
+
+  async function loadProjects() {
+    try {
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*, profiles:user_id(full_name, username)')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      allProjects = data || [];
+
+      document.getElementById('stat-total').textContent = allProjects.length;
+      document.getElementById('stat-creators').textContent = [...new Set(allProjects.map(p => p.profiles?.full_name || p.profiles?.username).filter(Boolean))].length || allProjects.length;
+      document.getElementById('stat-progress').textContent = allProjects.filter(p => {
+        const d = new Date(p.created_at);
+        return (Date.now() - d.getTime()) < 7 * 24 * 60 * 60 * 1000;
+      }).length;
+
+      loadingEl?.classList.add('hidden');
+      contentEl?.classList.remove('hidden');
+      refresh();
+    } catch (err) {
+      console.error('Erreur chargement projets:', err);
+      loadingEl.innerHTML = '<div class="w-20 h-20 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4"><svg class="w-10 h-10 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg></div><p class="text-gray-500">Erreur lors du chargement</p>';
+    }
+  }
+
+  function filterProjects() {
+    let filtered = [...allProjects];
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(p =>
+        p.title?.toLowerCase().includes(q) ||
+        p.description?.toLowerCase().includes(q)
+      );
+    }
+    return filtered;
+  }
+
+  function renderProjects(toRender) {
+    projectCount.textContent = toRender.length;
+    if (toRender.length === 0) { projectsGrid.classList.add('hidden'); noResults.classList.remove('hidden'); return; }
+    projectsGrid.classList.remove('hidden'); noResults.classList.add('hidden');
+
+    projectsGrid.innerHTML = toRender.map((project, i) => {
+      const hasDemo = !!project.demo_url;
+      const gradient = getGradient(i);
+      const author = project.profiles?.full_name || project.profiles?.username || 'Notre équipe';
+      const date = new Date(project.created_at).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
+
+      return `<div class="block group" style="animation: fadeInUp 0.3s ease ${i * 0.05}s both">
+        <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:border-gray-200 hover:-translate-y-1 transition-all duration-300">
+          <!-- Image -->
+          <div class="relative h-56 overflow-hidden">
+            ${project.image_url
+              ? `<img src="${project.image_url}" alt="${project.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />`
+              : `<div class="w-full h-full ${gradient}"></div>`
+            }
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent"></div>
+
+            <!-- Quick action -->
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              ${hasDemo
+                ? `<a href="${project.demo_url}" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 bg-white/95 backdrop-blur-sm text-gray-900 text-sm font-semibold rounded-xl shadow-lg flex items-center gap-2 hover:bg-white transition-colors">
+                    Voir la démo
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  </a>`
+                : `<span class="px-5 py-2.5 bg-white/90 backdrop-blur-sm text-gray-500 text-sm font-medium rounded-xl shadow-lg">Bientôt disponible</span>`
+              }
+            </div>
+
+            <!-- Date badge -->
+            <span class="absolute top-3 right-3 px-2.5 py-1 text-xs font-medium bg-white/90 backdrop-blur-sm text-gray-600 rounded-lg shadow-sm">
+              ${date}
+            </span>
+          </div>
+
+          <!-- Info -->
+          <div class="p-5">
+            <h3 class="font-bold text-gray-900 text-lg mb-1.5 group-hover:text-emerald-600 transition-colors">${project.title}</h3>
+            <p class="text-sm text-gray-400 mb-4 line-clamp-2">${project.description || ''}</p>
+
+            <!-- Footer -->
+            <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xs font-bold">
+                  ${(author).charAt(0).toUpperCase()}
+                </div>
+                <span class="text-xs text-gray-500">${author}</span>
+              </div>
+              ${hasDemo
+                ? `<a href="${project.demo_url}" target="_blank" rel="noopener noreferrer" class="text-xs font-medium text-emerald-600 flex items-center gap-1 group-hover:gap-2 transition-all">
+                    Démo
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                  </a>`
+                : `<span class="text-xs text-gray-400">En développement</span>`
+              }
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function getGradient(i) {
+    const gradients = [
+      'bg-gradient-to-br from-blue-500 to-cyan-600',
+      'bg-gradient-to-br from-purple-500 to-pink-600',
+      'bg-gradient-to-br from-emerald-500 to-teal-600',
+      'bg-gradient-to-br from-orange-500 to-amber-600',
+      'bg-gradient-to-br from-indigo-500 to-violet-600',
+      'bg-gradient-to-br from-red-500 to-rose-600',
+    ];
+    return gradients[i % gradients.length];
+  }
+
+  function refresh() { renderProjects(filterProjects()); }
+
+  searchInput?.addEventListener('input', (e) => { searchQuery = e.target.value; refresh(); });
+
+  loadProjects();
+</script>
+
+<style>
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>

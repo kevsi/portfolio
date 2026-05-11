@@ -1,0 +1,108 @@
+---
+import { supabase } from '@lib/supabase';
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+
+const { data: blogPosts, error } = await supabase
+  .from('blog_posts')
+  .select('*')
+  .eq('published', true)
+  .order('publish_date', { ascending: false });
+
+const posts = blogPosts || [];
+
+const featured = posts[0] || null;
+const others = posts.slice(1);
+
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString("fr-FR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+---
+
+<Layout title="Blog">
+  <Container>
+    <!-- Header -->
+    <div class="py-12 text-center">
+      <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Blog</h1>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        Conseils, tutoriels et actualités sur les avatars numériques, l'identité en ligne et le marketplace.
+      </p>
+    </div>
+
+    <!-- Featured Article -->
+    {featured && (
+      <a href={`/blog/${featured.slug}`} class="block group mb-12">
+        <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex flex-col md:flex-row">
+            <div class="md:w-1/2 aspect-video md:aspect-auto overflow-hidden">
+              <img
+                src={featured.image_url}
+                alt={featured.image_alt}
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+            <div class="md:w-1/2 p-8 flex flex-col justify-center">
+              <span class="inline-block w-fit px-3 py-1 text-xs font-semibold uppercase tracking-wider text-indigo-600 bg-indigo-50 rounded-full mb-4">
+                {featured.category}
+              </span>
+              <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3 group-hover:text-indigo-600 transition-colors">
+                {featured.title}
+              </h2>
+              <p class="text-gray-600 mb-4 line-clamp-3">
+                {featured.snippet}
+              </p>
+              <div class="flex items-center gap-3 text-sm text-gray-500">
+                <span>{featured.author}</span>
+                <span>·</span>
+                <time>{formatDate(featured.publish_date)}</time>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+    )}
+
+    <!-- Articles Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {others.map((post) => (
+        <a href={`/blog/${post.slug}`} class="group block">
+          <article class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col">
+            <div class="aspect-video overflow-hidden relative">
+              <img
+                src={post.image_url}
+                alt={post.image_alt}
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+              <span class="absolute top-3 left-3 px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-indigo-700 bg-white/90 backdrop-blur-sm rounded-lg">
+                {post.category}
+              </span>
+            </div>
+            <div class="p-6 flex flex-col flex-1">
+              <h2 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2">
+                {post.title}
+              </h2>
+              <p class="text-gray-500 text-sm mb-4 flex-1 line-clamp-3">
+                {post.snippet}
+              </p>
+              <div class="flex items-center justify-between text-sm text-gray-400 pt-4 border-t border-gray-100">
+                <span class="font-medium text-gray-600">{post.author}</span>
+                <time>{formatDate(post.publish_date)}</time>
+              </div>
+            </div>
+          </article>
+        </a>
+      ))}
+    </div>
+
+    <!-- Empty State -->
+    {posts.length === 0 && (
+      <div class="text-center py-16">
+        <p class="text-gray-500 text-lg">Aucun article publié pour le moment.</p>
+      </div>
+    )}
+  </Container>
+</Layout>
