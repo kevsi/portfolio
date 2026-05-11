@@ -30,11 +30,11 @@ const categories = [
             Projets
           </span>
           <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight mb-4">
-            Nos<br/>
+            Mes<br/>
             <span class="bg-gradient-to-r from-emerald-200 to-cyan-200 bg-clip-text text-transparent">réalisations</span>
           </h1>
           <p class="text-lg text-white/70 max-w-2xl mx-auto mb-8">
-            Chaque projet est le fruit d'une expertise technique et d'une vision innovante. Découvrez nos créations.
+            Chaque projet est le fruit d'une expertise technique et d'une vision innovante. Découvrez mes créations.
           </p>
 
           <!-- Search Bar Hero -->
@@ -174,7 +174,7 @@ const categories = [
     projectsGrid.innerHTML = toRender.map((project, i) => {
       const hasDemo = !!project.demo_url;
       const gradient = getGradient(i);
-      const author = project.profiles?.full_name || project.profiles?.username || 'Notre équipe';
+      const author = project.profiles?.full_name || project.profiles?.username || 'FASSINOU Alex';
       const date = new Date(project.created_at).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
 
       return `<div class="block group" style="animation: fadeInUp 0.3s ease ${i * 0.05}s both">
